@@ -3,20 +3,32 @@
 <html lang="pt-br">
     <head>
         <meta charset="UTF-8" />
-        <title>Editar Gênero</title>
+        <title>Editar Livro</title>
         <link href="/css/bootstrap.min.css" rel="stylesheet" />
     </head>
     <body>
         <div class="container">
-            <h1>Editar Gênero</h1>
-            <form action="/genero/update" method="post">
-                <input type="hidden" name="id" value="${genero.id}" />
+            <h1>Editar Livro</h1>
+            <form action="/livro/update" method="post">
+                <input type="hidden" name="id" value="${livro.id}" />
                 <div class="form-group">
-                    <label for="nome">Nome:</label>
-                    <input type="text" name="nome" class="form-control" value="${genero.nome}" />
+                    <label for="titulo">Titulo:</label>
+                    <input type="text" name="titulo" value="${livro.titulo}" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="isbn">ISBN:</label>
+                    <input type="text" name="isbn" value="${livro.isbn}" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="genero">Gênero:</label>
+                    <select name="genero" class="form-select">
+                        <c:forEach var="genero" items="${generos}">
+                            <option ${livro.genero.id == genero.id ? "selected" : ""} value="${genero.id}">${genero.nome}</option>
+                        </c:forEach>
+                    </select>
                 </div>
                 <br />
-                <a href="/genero/list" class="btn btn-primary" >Voltar</a>
+                <a href="/livro/list" class="btn btn-primary" >Voltar</a>
                 <button type="submit" class="btn btn-success">Salvar</button>
             </form>
         </div>

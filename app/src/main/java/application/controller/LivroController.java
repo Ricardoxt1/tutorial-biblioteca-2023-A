@@ -1,5 +1,7 @@
 package application.controller;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,13 +23,13 @@ public class LivroController {
     @RequestMapping("/list")
     public String list(Model model) {
         model.addAttribute("livros", livroRepo.findAll());
-        return "/livro/list";
+        return "livro/list";
     }
 
     @RequestMapping("/insert")
     public String insert(Model model) {
         model.addAttribute("generos", generoRepo.findAll());
-        return "/livro/insert";
+        return "livro/insert";
     }
 
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
@@ -42,6 +44,63 @@ public class LivroController {
         livro.setGenero(generoRepo.findById(idGenero).get());
 
         livroRepo.save(livro);
+
+        return "redirect:/livro/list";
+    }
+
+    @RequestMapping("/update")
+    public String update(
+        @RequestParam("id") int id,
+        Model model
+    ) {
+        Optional<Livro> livro = livroRepo.findById(id);
+
+        if(livro.isPresent()) {
+            model.addAttribute("livro", livro.get());
+            model.addAttribute("generos", generoRepo.findAll());
+            return "livro/update";
+        }
+
+        return "redirect:/livro/update";
+    }
+
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public String update(
+        @RequestParam("titulo") String titulo,
+        @RequestParam("isbn") String isbn,
+        @RequestParam("genero") int idGenero
+    ) {
+        Optional<Livro> livro = livroRepo.findById(idGenero);
+
+        if(!livro.isPresent()) {
+            livro.get().setTitulo(titulo);
+            livro.get().setIsbn(isbn);
+            livro.get().setGenero(generoRepo.findById(idGenero).get());
+
+            livroRepo.save(livro.get());
+        }
+        
+
+        return "redirect:/livro/list";
+    }
+
+    @RequestMapping("/delete")
+    public String delete(
+        @RequestParam("id") int id,
+        Model model
+    ) {
+        Optional<Livro> livro = livroRepo.findById(id);
+
+        if(livro.isPresent()) {
+            model.addAttribute("livro", livro.get());
+            return "livro/delete";
+        }
+        return "redirect:/livro/list";
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    public String delete(@RequestParam("id") int id) {
+        livroRepo.deleteById(id);
 
         return "redirect:/livro/list";
     }
